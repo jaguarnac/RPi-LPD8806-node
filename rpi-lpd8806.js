@@ -210,10 +210,10 @@
 			}
 			if (end === 0 || end > self.lastIndex){
 				end = self.lastIndex;
-				range(start,end+1).forEach(function(led){
-					self.__set_internal(led, color);
-				});
 			}
+			range(start,end+1).forEach(function(led){
+				self.__set_internal(led, color);
+			});
 		};
 		
 		//Fill the strand (or a subset) with a single color using RGB values
