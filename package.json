@@ -1,0 +1,25 @@
+{
+  "name": "RPi-LPD8806",
+  "preferGlobal": false,
+  "version": "0.0.1",
+  "author": "JaguarNac <jaguarnac@gmail.com>",
+  "description": "Node.js library for RPi-LPD8806 RGB LED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaguarnac/RPi-LPD8806-node.git"
+  },
+  "keywords": [
+    "LPD8806",
+    "RPi"
+  ],
+  "dependencies" : {
+    "onecolor"   :  "*"
+  },
+  "bundledDependencies": [
+    "onecolor"
+  ],  
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.6"
+  }
+}
