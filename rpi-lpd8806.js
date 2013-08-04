@@ -185,7 +185,7 @@ function LEDStrip(leds, dev){
 			self.buffer[led] = new Buffer(3);
 		});
 		range(256).forEach(function(i){
-			self.gamma[i] = 0x80 | Math.round( Math.pow(i)/255, 2.5 ) * 127 + 0.5;
+			self.gamma[i] = 0x80 | Math.floor( Math.pow(i/255, 2.5) * 127 + 0.5);
 		});
 	}
 	
@@ -205,27 +205,32 @@ function LEDStrip(leds, dev){
 	
 	//Push new data to strand
 	self.update = function(){
+		var _buffer = []
 		range(self.leds).forEach(function(x){
-			self.spi.write(self.buffer[x]);
-			self.spi.flush();
+			_buffer.push(self.buffer[x]);
+			//self.spi.write(self.buffer[x]);
+			//self.spi.flush();
 		});
-		self.spi.write(new Buffer('\x00\x00\x00')); //zero fill the last to prevent stray colors at the end
-		self.spi.write(new Buffer('\x00'));
-		self.spi.flush();
+		_buffer.push(new Buffer('\x00\x00\x00'));
+		_buffer.push(new Buffer('\x00'));
+		self.spi.write(Buffer.concat(_buffer, self.leds * 3 + 4));
+		//self.spi.write(new Buffer('\x00\x00\x00')); //zero fill the last to prevent stray colors at the end
+		//self.spi.write(new Buffer('\x00'));
+		//self.spi.flush();
 	};
 	
 	//Fill the strand (or a subset) with a single color using a Color object
-	self.fill = function(self, color, start, end){
+	self.fill = function(color, start, end){
 		if (start == undefined){start = 0;}
 		if (end == undefined){end = 0;}
 		if (start < 0){
 			start = 0
-			if (end == 0 || end > self.lastIndex){
-				end = self.lastIndex;
-				range(start,end+1).forEach(function(led){
-					self.__set_internal(led, color);
-				});
-			}
+		}
+		if (end == 0 || end > self.lastIndex){
+			end = self.lastIndex;
+			range(start,end+1).forEach(function(led){
+				self.__set_internal(led, color);
+			});
 		}
 	};
 	
@@ -262,9 +267,9 @@ function LEDStrip(leds, dev){
 		if(pixel < 0 || pixel > self.lastIndex){
 			return; //don't go out of bounds
 		}
-		self.buffer[pixel][self.c_order[0]] = self.gamma[Math.round(color.R * self.masterBrightness)]
-		self.buffer[pixel][self.c_order[1]] = self.gamma[Math.round(color.G * self.masterBrightness)]
-		self.buffer[pixel][self.c_order[2]] = self.gamma[Math.round(color.B * self.masterBrightness)]
+		self.buffer[pixel][self.c_order[0]] = self.gamma[Math.floor(color.R * self.masterBrightness)]
+		self.buffer[pixel][self.c_order[1]] = self.gamma[Math.floor(color.G * self.masterBrightness)]
+		self.buffer[pixel][self.c_order[2]] = self.gamma[Math.floor(color.B * self.masterBrightness)]
 	};
 	
 	//Set single pixel to Color value
