@@ -262,14 +262,14 @@ function LEDStrip(leds, dev){
 		if(pixel < 0 || pixel > self.lastIndex){
 			return; //don't go out of bounds
 		}
-		self.buffer[pixel][self.c_order[0]] = self.gamma[int(color.R * self.masterBrightness)]
-		self.buffer[pixel][self.c_order[1]] = self.gamma[int(color.G * self.masterBrightness)]
-		self.buffer[pixel][self.c_order[2]] = self.gamma[int(color.B * self.masterBrightness)]
+		self.buffer[pixel][self.c_order[0]] = self.gamma[Math.round(color.R * self.masterBrightness)]
+		self.buffer[pixel][self.c_order[1]] = self.gamma[Math.round(color.G * self.masterBrightness)]
+		self.buffer[pixel][self.c_order[2]] = self.gamma[Math.round(color.B * self.masterBrightness)]
 	};
 	
 	//Set single pixel to Color value
 	self.set = function(pixel, color){
-		self.__set_internal(pixel, color)
+		self.__set_internal(pixel, color);
 	};
 	
 	//Set single pixel to RGB value
