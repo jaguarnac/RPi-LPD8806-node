@@ -193,7 +193,6 @@
                 'i' : 0
             },
             function frame(strip, data){
-                console.log(data);
                 var c = new Color(colors[data.c].r, colors[data.c].g, colors[data.c].b);
                 if (data.i <= strip.lastIndex){
                     strip.anim_color_wipe(c);
