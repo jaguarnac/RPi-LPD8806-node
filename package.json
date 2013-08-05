@@ -8,6 +8,7 @@
     "type": "git",
     "url": "https://github.com/jaguarnac/RPi-LPD8806-node.git"
   },
+  "main":"./rpi-lpd8806",
   "keywords": [
     "LPD8806",
     "RPi"
