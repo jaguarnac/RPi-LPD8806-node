@@ -464,7 +464,7 @@
 		
 		
 		//Sine wave animation
-		self.anim_wave = function(color, cycles){
+		self.anim_wave = function(color, cycles, start, end){
 			var size,c2,y;
 			if (start === undefined){start = 0;}
 			if (end === undefined){end = 0;}

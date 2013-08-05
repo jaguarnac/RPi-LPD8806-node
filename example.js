@@ -16,35 +16,146 @@
         {r:255,b:255,g:255}
     ];
     
-    //TODO: me no like callback! me smash!!!!
-    
-    //fading
-    function fadeAnim(cb){
-        var c = 0, r, g, b, step = 0.01, level = 0.01, dir = step;
-        function frame(){
-           r = colors[c].r;
-           g = colors[c].g; 
-           b = colors[c].b;
-           
-           if (level > 0.0){
-               led.fill(new Color(r,g,b,level));
-               led.update();
-               if (level >= 0.99){
-                   dir = -step;
-               }
-               level += dir;
-               setTimeout(frame,5);
-           } else {
-               c++;
-               level = 0.01;
-               dir = step;
-               if (c == 4){
-                   cb();
-               }
-           }
-           frame();
+    /**
+     * A kinda hacky utility to play animations in sequense
+     */
+    function animSequense(anims){
+        var anim, current;
+        if (!anims || !Array.isArray(anims)){
+            return false;
+        }
+        if (anims.length === 0){
+            return false;
         }
         
+        function next(){
+            if ('undefined' === typeof current){
+                current = 0;
+            } else {
+                current ++;
+            }
+            if (current < anims.length){
+                anim = anims[current];
+                if (anim && 'function' == typeof anim){
+                    anim(next);
+                } else {
+                    next();
+                }
+            } else {
+                return false;
+            }
+        }
+        next();
+        
     }
+    
+    //Animation creator
+    function create_anim(strip, data, fnFrame, timeout, name){
+        var ended = false,_e,fnEnd;
+        
+        function end(){
+            strip.all_off();
+            ended = true;
+            if (fnEnd && 'function' === typeof fnEnd ){
+                fnEnd();
+            }
+        }
+        
+        function frame(){
+            strip.update();
+            if (fnFrame && 'function' === typeof fnFrame ){
+                _e = fnFrame(strip,data);
+                if ( _e === false ){
+                    end();
+                }
+            } else {
+                end();
+            }
+            if (!ended){
+                setTimeout(frame,timeout);
+            }
+        }
+        
+        function start(cb){
+            if (name){
+                console.log("Starting animation: " + name);
+            }
+            fnEnd = cb;
+            strip.all_off();
+            frame();
+        }
+        
+        return start;
+    }
+    
+    //fading
+    var fadeAnim = create_anim( 
+            led,
+            {
+                'c' : 0,
+                'step' : 0.01,
+                'level' : 0.01,
+                'dir' : 0.01
+            },
+            function frame(strip, data){
+                var r = colors[data.c].r,
+                g = colors[data.c].g,
+                b = colors[data.c].b;
+                
+                if (data.level > 0.0){
+                    strip.fill(new Color(r,g,b,data.level));
+                    if (data.level >= 0.99){
+                        data.dir = - data.step;
+                    }
+                    data.level += data.dir;
+                } else {
+                    data.c++;
+                    data.level = 0.01;
+                    data.dir = data.step;
+                    if (data.c == 4){
+                        return false;
+                    }
+                }
+            },
+            5,
+            'fadeAnim'
+    );
+    
+    var sine_1 = create_anim(
+            led,
+            {
+                'i': 0,
+                'color': new Color(255,0,0)
+            },
+            function(strip, data){
+                strip.anim_wave(data.color,4);
+                data.i++;
+                if (data.i >= strip.lastIndex){
+                    return false;
+                }
+            },
+            150,
+            'sine-1'
+    );
+    
+    var sine_2 = create_anim(
+            led,
+            {
+                'i': 0,
+                'color': new Color(255,0,0)
+            },
+            function(strip, data){
+                strip.anim_wave(data.color,4);
+                data.i++;
+                if (data.i >= strip.lastIndex){
+                    return false;
+                }
+            },
+            150,
+            'sine-2'
+    );
+    
+    
+    animSequense([fadeAnim, sine_1, sine_2]);
 	
 })();
