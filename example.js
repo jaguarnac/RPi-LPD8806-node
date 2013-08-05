@@ -117,8 +117,8 @@
                     }
                 }
             },
-            5,
-            'fadeAnim'
+            50,
+            'fade'
     );
     
     var sine_1 = create_anim(
@@ -142,7 +142,7 @@
             led,
             {
                 'i': 0,
-                'color': new Color(255,0,0)
+                'color': new Color(0,0,100)
             },
             function(strip, data){
                 strip.anim_wave(data.color,4);
@@ -155,7 +155,130 @@
             'sine-2'
     );
     
+    //rolling rainbow
+    var rainbow = create_anim(
+            led, 
+            { 'i':0 },
+            function(strip, data){
+                strip.anim_rainbow();
+                data.i++;
+                if (data.i > 384){
+                    return false;
+                }
+            },
+            10,
+            'rainbow'
+    );
     
-    animSequense([fadeAnim, sine_1, sine_2]);
+    //evenly distributed rainbow
+    var rolling_rainbow = create_anim(
+            led, 
+            { 'i':0 },
+            function(strip, data){
+                strip.anim_rainbow_cycle();
+                data.i++;
+                if (data.i > 384 *2){
+                    return false;
+                }
+            },
+            10,
+            'rolling rainbow'
+    );
+    
+    //wipe
+    var wipe = create_anim( 
+            led,
+            {
+                'c' : 0,
+                'i' : 0
+            },
+            function frame(strip, data){
+                console.log(data);
+                var c = new Color(colors[data.c].r, colors[data.c].g, colors[data.c].b);
+                if (data.i <= strip.lastIndex){
+                    strip.anim_color_wipe(c);
+                    data.i++;
+                } else {
+                    data.c++;
+                    data.i = 0;
+                    if (data.c == 4){
+                        return false;
+                    }
+                }
+            },
+            300,
+            'wipe'
+    );
+    
+    //chase
+    var chase = create_anim( 
+            led,
+            {
+                'c' : 0,
+                'i': 0
+            },
+            function frame(strip, data){
+                var c = new Color(colors[data.c].r, colors[data.c].g, colors[data.c].b);
+                if (data.i <= strip.lastIndex){
+                    strip.anim_color_chase(c);
+                    data.i++;
+                } else {
+                    data.c++;
+                    data.i = 0;
+                    if (data.c == 4){
+                        return false;
+                    }
+                }
+            },
+            300,
+            'chase'
+    );
+    
+    //scanner: single color and changing color
+    var scanner_red = create_anim(
+            led,
+            {
+                'color': new Color(255, 0, 0),
+                'i': 0
+            }, function(strip, data){
+                strip.anim_larson_scanner(data.color);
+                data.i++;
+                if (data.i >= strip.lastIndex *4){
+                    return false;
+                }
+            },
+            300,
+            'K.I.T.T.'
+    );
+    
+    var scanner_rainbow = create_anim(
+            led,
+            {
+                'i': 0
+            }, function(strip, data){
+                strip.anim_larson_rainbow(2, 0.5);
+                data.i++;
+                if (data.i >= strip.lastIndex *4){
+                    return false;
+                }
+            },
+            300,
+            'Rainbow Scanner'
+    );
+        
+
+        
+
+    
+    animSequense([fadeAnim, 
+                  sine_1, 
+                  sine_2, 
+                  rainbow, 
+                  rolling_rainbow,
+                  wipe,
+                  chase,
+                  scanner_red,
+                  scanner_rainbow
+                  ]);
 	
 })();

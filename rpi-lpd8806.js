@@ -114,7 +114,7 @@
 		
 		// gets Color object (RGB)
 		self.getColorRGB  = function(){
-			_c = new color.HSV(self.H/360, self.S, self.V).rgb();
+			var _c = new color.HSV(self.H/360, self.S, self.V).rgb();
 			return new Color(_c.red() * 255, _c.green() * 255, _c.blue() * 255);
 		};
 		
@@ -395,7 +395,7 @@
 		
 		//larson scanner (i.e. Cylon Eye or K.I.T.T.)
 		self.anim_larson_scanner = function(color, tail, fade, start, end){
-			var size, c, level;
+			var size, c, level, tl, tr;
 			if (start === undefined){start = 0;}
 			if (end === undefined){end = 0;}
 			if (tail === undefined){tail = 2;}
